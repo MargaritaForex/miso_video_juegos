@@ -1,7 +1,7 @@
-import math
 import random
 import pygame
 import esper
+from src.ecs.components.c_animation import CAnimation
 
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
 from src.ecs.components.c_input_command import CInputCommand
@@ -33,10 +33,10 @@ def create_sprite(world: esper.World, pos:pygame.Vector2, vel:pygame.Vector2,
                         CVelocity(vel))
     world.add_component(sprite_entity,
                         CSurface.from_surface(surface))
-    return sprite_entity
+    return sprite_entity # Devolver la entidad
 
 def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dict):
-    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha()
+    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha() #conserva la transparencia
     vel_max = enemy_info["velocity_max"]
     vel_min = enemy_info["velocity_min"]
     vel_range = random.randrange(vel_min, vel_max)
@@ -47,13 +47,14 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
-    player_sprite = pygame.image.load(player_info["image"]).convert_alpha()
+    player_sprite = pygame.image.load(player_info["image"]).convert_alpha() # Forma mas optima posible
     size = player_sprite.get_size()
     pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size[0] / 2),
                          player_lvl_info["position"]["y"] - (size[1] / 2))
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CAnimation(player_info["animations"]))
     return player_entity
 
 
@@ -88,7 +89,7 @@ def create_bullet(world: esper.World,
                   player_pos: pygame.Vector2,
                   player_size: pygame.Vector2,
                   bullet_info: dict):
-    bullet_surface = pygame.image.load(bullet_info["image"])
+    bullet_surface = pygame.image.load(bullet_info["image"]).convert_alpha()
     pos = pygame.Vector2(player_pos.x + player_size[0] / 2, player_pos.y + player_size[1] / 2)
     
     direccion = (mouse_pos - player_pos)

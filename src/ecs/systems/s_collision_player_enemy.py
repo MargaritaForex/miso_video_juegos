@@ -8,7 +8,7 @@ def system_collision_player_enemy(world:esper.World, player_entity:int, level_cf
     pl_t = world.component_for_entity(player_entity, CTransform)
     pl_s = world.component_for_entity(player_entity, CSurface)
     pl_rect = pl_s.area.copy()
-    pl_rect.topleft = pl_s.pos
+    pl_rect.topleft = pl_t.pos
     for enemy_entity, (c_s, c_t, _) in components:
         ene_rect = c_s.area.copy()
         ene_rect.topleft = c_t.pos
