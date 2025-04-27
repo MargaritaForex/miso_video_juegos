@@ -2,7 +2,7 @@ from typing import List
 
 
 class CAnimation:
-    def __init__(self, animations: dict) -> None: #Se le metio logica al sistema
+    def __init__(self, animations: dict) -> None:  #Se le metio logica al sistema
         self.number_frames = animations["number_frames"]
         self.animations_list: List[AnimationData] = []
         for anim in animations["list"]:
@@ -12,6 +12,7 @@ class CAnimation:
         self.curr_anim = 0
         self.curr_anim_time = 0
         self.curr_frame = self.animations_list[self.curr_anim].start
+
 
 class AnimationData:
     def __init__(self, name: str, start: int, end: int, framerate: float) -> None:
