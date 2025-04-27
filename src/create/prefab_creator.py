@@ -38,7 +38,7 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
     player_sprite = pygame.image.load(player_info["image"]).convert_alpha()
-    size = player_sprite.get_size()  # Devuelve una tupla
+    size = player_sprite.get_size()  # Devuelve una tupla, es decir arreglo de 2 posiciones
     size = (size[0] / player_info["animations"]["number_frames"], size[1])
     pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size[0] / 2),
                          player_lvl_info["position"]["y"] - (size[1] / 2))

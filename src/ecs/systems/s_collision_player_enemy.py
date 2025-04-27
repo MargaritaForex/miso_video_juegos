@@ -12,7 +12,7 @@ def system_collision_player_enemy(world: esper.World, player_entity: int, level_
     pl_rect = CSurface.get_area_relative(pl_s.area, pl_t.pos)
     pl_rect.topleft = pl_t.pos
     for enemy_entity, (c_s, c_t, _) in components:
-        ene_rect = c_s.area.copy()
+        ene_rect = c_s.area.copy() # Si no se copia va a quedar como una referencia
         ene_rect.topleft = c_t.pos
         if ene_rect.colliderect(pl_rect):
             world.delete_entity(enemy_entity)
