@@ -11,6 +11,8 @@ def system_animation(world:esper.World, delta_time:float):
         c_a.curr_anim_time -= delta_time
         # 2. Cuando curr_imte <= 0
         if c_a.curr_anim_time <= 0:
+            # RESTAURAR EL TIEMPO DE LA ANIMACION
+            c_a.curr_anim_time = c_a.animations_list[c_a.curr_anim].framerate
             # CAMBIO DE FRAME
             c_a.curr_frame += 1
             # Limitar el frame con sus propiedad de start y end
