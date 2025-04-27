@@ -112,9 +112,7 @@ class GameEngine:
         system_movement(self.ecs_world, self.delta_time)
 
         system_screen_bounce(self.ecs_world, self.screen)
-        system_screen_player(
-            self.ecs_world, self.player_cfg["input_velocity"], self.screen
-        )
+        system_screen_player(self.ecs_world, self.screen)
         system_screen_bullet(self.ecs_world, self.screen)
 
         system_collision_enemy_bullet(self.ecs_world)
