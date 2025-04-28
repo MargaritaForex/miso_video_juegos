@@ -12,6 +12,8 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.c_explosion import CExplosion
+from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 
 
 def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
@@ -93,3 +95,14 @@ def create_bullet(world: esper.World,
 
     bullet_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullet_entity, CTagBullet())
+
+
+def create_explosion(world, pos, explosion_info):
+    explosion_surface = pygame.image.load(explosion_info["image"]).convert_alpha()
+    explosion_entity = world.create_entity()
+    world.add_component(explosion_entity, CSurface.from_surface(explosion_surface))
+    world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
+    world.add_component(explosion_entity, CExplosion(explosion_info.get("duration", 0.5)))
+    world.add_component(explosion_entity, CTagExplosion())
+    world.add_component(explosion_entity, CTransform(pos))
+    return explosion_entity
