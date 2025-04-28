@@ -2,6 +2,7 @@ import json
 import pygame
 import esper
 import asyncio
+import math
 
 from src.ecs.components.c_special_ability import CSpecialAbility
 from src.ecs.systems.s_player_state import system_player_state
@@ -118,14 +119,59 @@ class GameEngine:
         create_input_player(self.ecs_world)
 
         # Crear un texto de ejemplo
+        # Texto de título
         create_text(
             world=self.ecs_world,
-            text="¡Hola Mundo!",
-            position=pygame.Vector2(400, 300),  # Posición en pantalla
-            font_size=20,
-            color=pygame.Color(255, 255, 255),  # Color blanco
-            centered=True,  # Centrado en la posición
-            hidden=False  # Visible
+            text="EJERCICIO 04",
+            position=pygame.Vector2(20, 30),
+            font_size=12,
+            color=pygame.Color(255, 255, 255),  # Blanco
+            centered=False,
+            hidden=False
+        )
+
+        # Texto de controles
+        create_text(
+            world=self.ecs_world,
+            text="Controles: Flechas, Disparo click normal, Disparo especial click derecho",
+            position=pygame.Vector2(20, 50),
+            font_size=8,
+            color=pygame.Color(255, 255, 0),  # Amarillo
+            centered=False,
+            hidden=False
+        )
+
+        # Texto "ESPECIAL"
+        create_text(
+            world=self.ecs_world,
+            text="ESPECIAL",
+            position=pygame.Vector2(20, self.screen.get_height() - 40),
+            font_size=8,
+            color=pygame.Color(255, 255, 255),  # Blanco
+            centered=False,
+            hidden=False
+        )
+
+        # Texto del porcentaje especial (empieza en 0%)
+        create_text(
+            world=self.ecs_world,
+            text="0%",
+            position=pygame.Vector2(25, self.screen.get_height() - 20),
+            font_size=8,
+            color=pygame.Color(0, 255, 0),  # Verde
+            centered=False,
+            hidden=False
+        )
+
+        # Texto de pausa (inicialmente oculto)
+        create_text(
+            world=self.ecs_world,
+            text="GAME PAUSED",
+            position=pygame.Vector2(self.screen.get_width() // 2, self.screen.get_height() // 2),
+            font_size=16,
+            color=pygame.Color(255, 0, 0),  # Rojo
+            centered=True,
+            hidden=True  # <<<<< De inicio oculto hasta que pongas pausa
         )
 
     def _calculate_time(self):
@@ -228,5 +274,35 @@ def system_game_state(world: esper.World, event: pygame.event.Event):
         print("¡PRESIONASTE PAUSA!")
 
 def system_special_ability(world: esper.World, delta_time: float, bullet_config, event=None):
-    components = world.get_components(CPlayerState, CTransform, CSurface, CInputCommand, CSpecialAbility)
+    components = world.get_components(CPlayerState, CTransform, CSurface, CSpecialAbility)
     print("Componentes encontrados:", len(components))
+    
+    # Solo procesar si hay evento y es presion de tecla
+    if event is not None and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+        print("¡Habilidad especial activada!")
+        
+        # Para cada jugador con habilidad especial
+        for _, (player_state, transform, surface, special_ability) in components:
+            # Verificar si la habilidad está lista (cooldown)
+            if special_ability.cooldown <= 0:
+                # Crear 8 balas en círculo
+                for angle in range(0, 360, 45):  # 0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°
+                    # Convertir ángulo a radianes
+                    angle_rad = math.radians(angle)
+                    
+                    # Calcular dirección basada en el ángulo
+                    direction = pygame.Vector2(math.cos(angle_rad), math.sin(angle_rad))
+                    
+                    # Crear la bala
+                    create_bullet(
+                        world,
+                        direction,  # Usamos la dirección calculada
+                        transform.pos,  # Posición del jugador
+                        surface.surf.get_size(),  # Tamaño del jugador
+                        bullet_config
+                    )
+                
+                # Reiniciar el cooldown
+                special_ability.cooldown = 5.0  # 5 segundos de cooldown
+            else:
+                print("Habilidad especial en cooldown")
