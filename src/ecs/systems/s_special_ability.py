@@ -15,10 +15,10 @@ cooldown_text_entity = None
 def system_special_ability(world: esper.World, delta_time: float, bullet_config, event=None):
     global cooldown_text_entity
 
-    components = world.get_components(CPlayerState, CTransform, CSurface, CInputCommand, CSpecialAbility)
+    components = world.get_components(CPlayerState, CTransform, CSurface, CSpecialAbility)
     print(f"[DEBUG] Jugadores con habilidad especial: {len(components)}")
 
-    for _, (player, transform, surface, input_command, special_ability) in components:
+    for _, (player, transform, surface, special_ability) in components:
         print(f"[DEBUG] Cooldown actual: {special_ability.current_cooldown}, Ready: {special_ability.ready}")
         # Actualizar cooldown
         if not special_ability.ready:
