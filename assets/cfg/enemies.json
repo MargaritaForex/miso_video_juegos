@@ -1,46 +1,46 @@
 {
-    "TypeA": {
+    "AsteroidA": {
         "image": "assets/img/asteroid_01.png",
-        "health": 1,
+        "velocity_min": 25,
+        "velocity_max": 50
+    },
+    "AsteroidB": {
+        "image": "assets/img/asteroid_02.png",
         "velocity_min": 50,
+        "velocity_max": 75
+    },
+    "AsteroidC": {
+        "image": "assets/img/asteroid_03.png",
+        "velocity_min": 75,
         "velocity_max": 100
     },
-    "TypeB": {
-        "image": "assets/img/asteroid_02.png",
-        "health": 2,
-        "velocity_min": 75,
-        "velocity_max": 125
-    },
-    "TypeC": {
-        "image": "assets/img/asteroid_03.png",
-        "health": 3,
-        "velocity_min": 100,
-        "velocity_max": 150
-    },
-    "TypeD": {
+    "AsteroidD": {
         "image": "assets/img/asteroid_04.png",
-        "health": 4,
-        "velocity_min": 125,
-        "velocity_max": 175
+        "velocity_min": 100,
+        "velocity_max": 125
     },
     "Hunter": {
         "image": "assets/img/enemy.png",
-        "num_frames": 4,
         "animations": {
-            "IDLE": {
-                "start_frame": 0,
-                "end_frame": 0,
-                "framerate": 1
-            },
-            "MOVE": {
-                "start_frame": 0,
-                "end_frame": 3,
-                "framerate": 8
-            }
+            "number_frames": 6,
+            "list": [
+                {
+                    "name": "MOVE",
+                    "start": 0,
+                    "end": 5,
+                    "framerate": 10
+                },
+                {
+                    "name": "IDLE",
+                    "start": 0,
+                    "end": 0,
+                    "framerate": 1
+                }
+            ]
         },
-        "health": 3,
-        "chase_distance": 200,
-        "return_distance": 300,
-        "chase_speed": 200
+        "velocity_chase": 75,
+        "velocity_return": 100,
+        "distance_start_chase": 100,
+        "distance_start_return": 200
     }
 }

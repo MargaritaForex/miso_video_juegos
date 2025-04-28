@@ -14,6 +14,8 @@ from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.c_explosion import CExplosion
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.c_hunter_behavior import CHunterBehavior
+from src.ecs.components.tags.c_tag_hunter import CTagHunter
 
 
 def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
@@ -28,15 +30,28 @@ def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
     return sprite_entity  # Devolver la entidad
 
 
-def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dict):
-    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha()  #conserva la transparencia
-    vel_max = enemy_info["velocity_max"]
-    vel_min = enemy_info["velocity_min"]
-    vel_range = random.randrange(vel_min, vel_max)
-    velocity = pygame.Vector2(random.choice([-vel_range, vel_range]),
-                              random.choice([-vel_range, vel_range]))
-    enemy_entity = create_sprite(world, pos, velocity, enemy_surface)
-    world.add_component(enemy_entity, CTagEnemy())
+def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dict, enemy_type: str):
+    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha()
+    if enemy_type == "Hunter":
+        velocity = pygame.Vector2(0, 0)
+        enemy_entity = create_sprite(world, pos, velocity, enemy_surface)
+        world.add_component(enemy_entity, CTagEnemy())
+        world.add_component(enemy_entity, CTagHunter())
+        world.add_component(enemy_entity, CHunterBehavior(
+            origin_pos=pos.copy(),
+            chase_distance=enemy_info["distance_start_chase"],
+            return_distance=enemy_info["distance_start_return"],
+            chase_speed=enemy_info["velocity_chase"]
+        ))
+        world.add_component(enemy_entity, CAnimation(enemy_info["animations"]))
+    else:
+        vel_max = enemy_info["velocity_max"]
+        vel_min = enemy_info["velocity_min"]
+        vel_range = random.randrange(vel_min, vel_max)
+        velocity = pygame.Vector2(random.choice([-vel_range, vel_range]),
+                                  random.choice([-vel_range, vel_range]))
+        enemy_entity = create_sprite(world, pos, velocity, enemy_surface)
+        world.add_component(enemy_entity, CTagEnemy())
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
