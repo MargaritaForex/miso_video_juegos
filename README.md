@@ -5,8 +5,8 @@ Clonar el repositorio
 bash
 Copy
 Edit
-git clone [URL del repositorio]
-cd [nombre-del-proyecto]
+git clone [[URL del repositorio]](https://github.com/MargaritaForex/miso_video_juegos)
+cd [miso_video_juegos]
 Crear un entorno virtual en Python
 
 bash
