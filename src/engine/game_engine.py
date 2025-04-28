@@ -124,7 +124,7 @@ class GameEngine:
         )
         system_screen_bullet(self.ecs_world, self.screen)
 
-        system_collision_enemy_bullet(self.ecs_world)
+        system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg)
         system_collision_player_enemy(
             self.ecs_world, self._player_entity, self.level_01_cfg, self.explosion_cfg
         )
