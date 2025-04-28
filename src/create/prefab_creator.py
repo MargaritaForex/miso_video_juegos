@@ -16,6 +16,8 @@ from src.ecs.components.c_explosion import CExplosion
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.c_hunter_behavior import CHunterBehavior
 from src.ecs.components.tags.c_tag_hunter import CTagHunter
+from src.ecs.components.c_special_ability import CSpecialAbility
+from src.ecs.components.c_text import CText
 
 
 def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
@@ -67,6 +69,7 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
                         CAnimation(player_info["animations"]))
     world.add_component(player_entity,
                         CPlayerState())
+    world.add_component(player_entity, CSpecialAbility(5.0))
     return player_entity
 
 
@@ -101,6 +104,8 @@ def create_bullet(world: esper.World,
                   player_pos: pygame.Vector2,
                   player_size: pygame.Vector2,
                   bullet_info: dict):
+    print(f"Creando bala de {player_pos} hacia {mouse_pos}")
+
     bullet_surface = pygame.image.load(bullet_info["image"])
     bullet_size = bullet_surface.get_rect().size
     pos = pygame.Vector2(player_pos.x + (player_size[0] / 2) - (bullet_size[0] / 2),
@@ -121,3 +126,17 @@ def create_explosion(world, pos, explosion_info):
     world.add_component(explosion_entity, CTagExplosion())
     world.add_component(explosion_entity, CTransform(pos))
     return explosion_entity
+
+
+def create_text(world: esper.World, text: str, position: pygame.Vector2, font_size: int, color: pygame.Color, font: str = 'PressStart2P.ttf', centered: bool = False, hidden: bool = False) -> int:
+    entity = world.create_entity()
+    world.add_component(entity, CText(
+        text=text,
+        position=position,
+        font_size=font_size,
+        color=color,
+        font=font,
+        centered=centered,
+        hidden=hidden
+    ))
+    return entity

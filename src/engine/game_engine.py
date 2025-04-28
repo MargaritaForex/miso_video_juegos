@@ -1,6 +1,8 @@
 import json
 import pygame
 import esper
+import asyncio
+
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_animation import system_animation
 
@@ -28,10 +30,18 @@ from src.create.prefab_creator import (
     create_input_player,
     create_player_square,
     create_bullet,
+    create_text,
 )
 
 from src.ecs.systems.s_explosion import system_explosion
 from src.ecs.systems.s_hunter_behavior import system_hunter_behavior
+from src.ecs.systems.s_special_ability import system_special_ability
+
+from src.ecs.components.c_text import CText
+from src.engine.service_locator import ServiceLocator
+
+from src.ecs.systems.s_text_rendering import system_text_rendering
+from src.ecs.systems.s_game_state import system_game_state
 
 
 class GameEngine:
@@ -57,6 +67,8 @@ class GameEngine:
 
         self.num_bullets = 0
 
+        self.ecs_world.add_processor(system_text_rendering, priority=1)
+
     def _load_config_files(self):
         with open("assets/cfg/window.json", encoding="utf-8") as window_file:
             self.window_cfg = json.load(window_file)
@@ -71,7 +83,7 @@ class GameEngine:
         with open("assets/cfg/explosion.json", encoding="utf-8") as explosion_file:
             self.explosion_cfg = json.load(explosion_file)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         self._create()
         self.is_running = True
         while self.is_running:
@@ -79,6 +91,7 @@ class GameEngine:
             self._process_events()
             self._update()
             self._draw()
+            await asyncio.sleep(0)
         self._clean()
 
     def _create(self):
@@ -101,6 +114,17 @@ class GameEngine:
         create_enemy_spawner(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
 
+        # Crear un texto de ejemplo
+        create_text(
+            world=self.ecs_world,
+            text="¡Hola Mundo!",
+            position=pygame.Vector2(400, 300),  # Posición en pantalla
+            font_size=20,
+            color=pygame.Color(255, 255, 255),  # Color blanco
+            centered=True,  # Centrado en la posición
+            hidden=False  # Visible
+        )
+
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
@@ -109,7 +133,9 @@ class GameEngine:
 
     def _process_events(self):
         for event in pygame.event.get():
+            print(event)  # <-- Depuración: ver todos los eventos
             system_input(self.ecs_world, event, self._do_action)
+            system_game_state(self.ecs_world, event)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
@@ -133,6 +159,7 @@ class GameEngine:
         player_pos = self._player_c_t.pos
         system_hunter_behavior(self.ecs_world, player_pos)
         system_explosion(self.ecs_world, self.delta_time)
+        system_special_ability(self.ecs_world, self.delta_time, self.bullet_cfg)
         self.ecs_world._clear_dead_entities()
         self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
 
@@ -167,3 +194,25 @@ class GameEngine:
                 self._player_c_s.surf.get_size(),
                 self.bullet_cfg,
             )
+
+def system_text_rendering(world: esper.World, screen: pygame.Surface):
+    components = world.get_component(CText)
+    
+    for _, text_comp in components:
+        # Si el texto está sucio o no tiene superficie, renderiza de nuevo
+        if text_comp.dirty or text_comp.surface is None:
+            font = ServiceLocator.fonts_service.get(text_comp.font, text_comp.font_size)
+            text_comp.surface = font.render(text_comp.text, True, text_comp.color)
+            text_comp.dirty = False
+        
+        # Calcula la posición (centrado si es necesario)
+        position = pygame.Vector2(text_comp.position)
+        if text_comp.centered:
+            position.x -= text_comp.surface.get_width() // 2
+            position.y -= text_comp.surface.get_height() // 2
+
+        # Si está oculto, no renderiza
+        if text_comp.hidden:
+            text_comp.surface.set_alpha(0)
+        else:
+            screen.blit(text_comp.surface, position)
