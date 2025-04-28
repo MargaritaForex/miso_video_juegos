@@ -1,6 +1,7 @@
 import random
 import pygame
 import esper
+from src.ecs.components.c_player_state import CPlayerState
 from src.ecs.components.c_animation import CAnimation
 
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
@@ -47,6 +48,8 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
     world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity,
                         CAnimation(player_info["animations"]))
+    world.add_component(player_entity,
+                        CPlayerState())
     return player_entity
 
 

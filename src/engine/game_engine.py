@@ -1,6 +1,7 @@
 import json
 import pygame
 import esper
+from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_animation import system_animation
 
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
@@ -110,6 +111,7 @@ class GameEngine:
     def _update(self):
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
+        system_player_state(self.ecs_world)
 
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(
