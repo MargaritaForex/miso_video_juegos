@@ -1,70 +1,73 @@
-🚀 Space Shooter - Instrucciones de Instalación y Ejecución
-🛠️ Instalación Local
-Clonar el repositorio
+# 🚀 Space Shooter - Instrucciones de Instalación y Ejecución
 
-bash
-Copy
-Edit
-git clone [URL del repositorio]
-cd [nombre-del-proyecto]
-Crear un entorno virtual en Python
+## 🛠️ Instalación Local
 
-bash
-Copy
-Edit
-python -m venv .venv
-Activar el entorno virtual
+1. **Clonar el repositorio**
+   ```bash
+   git clone [https://github.com/MargaritaForex/miso_video_juegos]
+   cd [miso_video_juegos]
+   ```
 
-En Windows:
+2. **Crear un entorno virtual en Python**
+   ```bash
+   python -m venv .venv
+   ```
 
-bash
-Copy
-Edit
-.venv\Scripts\activate
-(En MacOS/Linux sería source .venv/bin/activate, pero tu instrucción es para Windows)
+3. **Activar el entorno virtual**
+   - En Windows:
+     ```bash
+     .venv\Scripts\activate
+     ```
 
-Instalar las dependencias
+4. **Instalar las dependencias**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-bash
-Copy
-Edit
-pip install -r requirements.txt
-🖥️ Generar Ejecutable (Versión de Escritorio - Windows)
-Para compilar el juego en un archivo .exe listo para distribución:
+---
 
-bash
-Copy
-Edit
+## 🔤️ Generar Ejecutable (Versión de Escritorio - Windows)
+
+Para compilar el juego en un archivo `.exe` listo para distribución:
+
+```bash
 pyinstaller --onefile --windowed --clean --exclude-module numpy --exclude-module mkl main.py
+```
+
 Esto generará:
+- Un ejecutable en la carpeta `dist/`
+- Puedes empaquetar el `.exe` en un `.zip` para subirlo a itch.io o distribuirlo.
 
-Un ejecutable en la carpeta dist/
+---
 
-Puedes empaquetar el .exe en un .zip para subirlo a itch.io o distribuirlo.
+## 🌐 Exportar para Web (Versión Navegador)
 
-🌐 Exportar para Web (Versión Navegador)
-Para convertir tu juego en una versión web jugable directamente en el navegador usando pygbag:
+Para convertir tu juego en una versión web jugable directamente en el navegador usando **pygbag**:
 
-bash
-Copy
-Edit
+```bash
 python -m pygbag .
-Esto creará una carpeta build/web/ lista para publicar en plataformas como Itch.io, GitHub Pages, etc.
+```
 
-🎮 Controles del Juego
-Mover nave: Flechas del teclado
+Esto creará una carpeta `build/web/` lista para publicar en plataformas como **Itch.io**, **GitHub Pages**, etc.
 
-Disparo normal: Clic izquierdo del mouse
+---
 
-Poder especial: Presionar tecla E (requiere recarga de 15 segundos)
+## 🎮 Controles del Juego
 
-Pausar / Reanudar: Tecla P
+- **Mover nave**: Flechas del teclado
+- **Disparo normal**: Clic izquierdo del mouse
+- **Poder especial**: Presionar tecla `E` (requiere recarga de 15 segundos)
+- **Pausar / Reanudar**: Tecla `P`
 
-🛡️ Requisitos
-Python 3.10 o superior
+---
 
-Pygame instalado (se instala automáticamente con requirements.txt)
+## 🛡️ Requisitos
 
-👩‍💻 Créditos
-Desarrollado como parte del curso MISO-VideoJuegos - Universidad de los Andes.
+- Python 3.10 o superior
+- Pygame instalado (se instala automáticamente con `requirements.txt`)
 
+---
+
+## 👩‍💻 Créditos
+
+Desarrollado como parte del curso **MISO-VideoJuegos** - Universidad de los Andes.
