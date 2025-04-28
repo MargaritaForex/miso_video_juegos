@@ -273,36 +273,3 @@ def system_game_state(world: esper.World, event: pygame.event.Event):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
         print("¡PRESIONASTE PAUSA!")
 
-def system_special_ability(world: esper.World, delta_time: float, bullet_config, event=None):
-    components = world.get_components(CPlayerState, CTransform, CSurface, CSpecialAbility)
-    print("Componentes encontrados:", len(components))
-    
-    # Solo procesar si hay evento y es presion de tecla
-    if event is not None and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-        print("¡Habilidad especial activada!")
-        
-        # Para cada jugador con habilidad especial
-        for _, (player_state, transform, surface, special_ability) in components:
-            # Verificar si la habilidad está lista (cooldown)
-            if special_ability.cooldown <= 0:
-                # Crear 8 balas en círculo
-                for angle in range(0, 360, 45):  # 0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°
-                    # Convertir ángulo a radianes
-                    angle_rad = math.radians(angle)
-                    
-                    # Calcular dirección basada en el ángulo
-                    direction = pygame.Vector2(math.cos(angle_rad), math.sin(angle_rad))
-                    
-                    # Crear la bala
-                    create_bullet(
-                        world,
-                        direction,  # Usamos la dirección calculada
-                        transform.pos,  # Posición del jugador
-                        surface.surf.get_size(),  # Tamaño del jugador
-                        bullet_config
-                    )
-                
-                # Reiniciar el cooldown
-                special_ability.cooldown = 5.0  # 5 segundos de cooldown
-            else:
-                print("Habilidad especial en cooldown")
