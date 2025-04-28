@@ -73,6 +73,8 @@ class GameEngine:
 
         self.ecs_world.add_processor(SystemTextRendering(self.screen), priority=1)
 
+        self.paused = False
+
     def _load_config_files(self):
         with open("assets/cfg/window.json", encoding="utf-8") as window_file:
             self.window_cfg = json.load(window_file)
@@ -184,27 +186,30 @@ class GameEngine:
         for event in pygame.event.get():
             print(event)  # <-- Depuración: ver todos los eventos
             system_input(self.ecs_world, event, self._do_action)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                self.paused = not self.paused
+                print(f"[DEBUG] Pausa {'activada' if self.paused else 'desactivada'}")
             system_game_state(self.ecs_world, event)
             system_special_ability(self.ecs_world, self.delta_time, self.bullet_cfg, event)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
     def _update(self):
+        if self.paused:
+            self.ecs_world._clear_dead_entities()
+            return
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_player_state(self.ecs_world)
-
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(
             self.ecs_world, self.player_cfg["input_velocity"], self.screen
         )
         system_screen_bullet(self.ecs_world, self.screen)
-
         system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg)
         system_collision_player_enemy(
             self.ecs_world, self._player_entity, self.level_01_cfg, self.explosion_cfg
         )
-
         system_animation(self.ecs_world, self.delta_time)
         player_pos = self._player_c_t.pos
         system_hunter_behavior(self.ecs_world, player_pos)
@@ -212,7 +217,6 @@ class GameEngine:
         system_special_ability(self.ecs_world, self.delta_time, self.bullet_cfg)
         self.ecs_world._clear_dead_entities()
         self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
-
 
     def _draw(self):
         self.screen.fill(self.bg_color)  # 1. Limpia pantalla

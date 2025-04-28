@@ -16,14 +16,18 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
     global cooldown_text_entity
 
     components = world.get_components(CPlayerState, CTransform, CSurface, CInputCommand, CSpecialAbility)
+    print(f"[DEBUG] Jugadores con habilidad especial: {len(components)}")
 
     for _, (player, transform, surface, input_command, special_ability) in components:
+        print(f"[DEBUG] Cooldown actual: {special_ability.current_cooldown}, Ready: {special_ability.ready}")
         # Actualizar cooldown
         if not special_ability.ready:
             special_ability.current_cooldown -= delta_time
+            print(f"[DEBUG] Bajando cooldown: {special_ability.current_cooldown}")
             if special_ability.current_cooldown <= 0:
                 special_ability.ready = True
                 special_ability.current_cooldown = 0
+                print("[DEBUG] Habilidad especial lista para usarse!")
 
         # ACTUALIZAR el texto de cooldown
         if cooldown_text_entity is None:
@@ -44,6 +48,7 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
 
         # Activar habilidad especial solo si ready y se presiona E
         if event is not None and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+            print("[DEBUG] Evento KEYDOWN de E detectado")
             if special_ability.ready:
                 print("¡Habilidad especial activada!")
                 # Crear 8 balas en círculo
@@ -60,5 +65,5 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
                 special_ability.ready = False
                 special_ability.current_cooldown = special_ability.cooldown_time
             else:
-                print("Habilidad especial en cooldown")
+                print("[DEBUG] Habilidad especial en cooldown")
 
