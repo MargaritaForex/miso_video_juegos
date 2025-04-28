@@ -3,6 +3,7 @@ import pygame
 import esper
 import asyncio
 
+from src.ecs.components.c_special_ability import CSpecialAbility
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_animation import system_animation
 
@@ -40,8 +41,10 @@ from src.ecs.systems.s_special_ability import system_special_ability
 from src.ecs.components.c_text import CText
 from src.engine.service_locator import ServiceLocator
 
-from src.ecs.systems.s_text_rendering import system_text_rendering
+from src.ecs.systems.s_text_rendering import SystemTextRendering
 from src.ecs.systems.s_game_state import system_game_state
+
+from src.ecs.components.c_player_state import CPlayerState
 
 
 class GameEngine:
@@ -67,7 +70,7 @@ class GameEngine:
 
         self.num_bullets = 0
 
-        self.ecs_world.add_processor(system_text_rendering, priority=1)
+        self.ecs_world.add_processor(SystemTextRendering(self.screen), priority=1)
 
     def _load_config_files(self):
         with open("assets/cfg/window.json", encoding="utf-8") as window_file:
@@ -136,6 +139,7 @@ class GameEngine:
             print(event)  # <-- Depuración: ver todos los eventos
             system_input(self.ecs_world, event, self._do_action)
             system_game_state(self.ecs_world, event)
+            system_special_ability(self.ecs_world, self.delta_time, self.bullet_cfg, event)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
@@ -163,10 +167,12 @@ class GameEngine:
         self.ecs_world._clear_dead_entities()
         self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
 
+
     def _draw(self):
-        self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen)
-        pygame.display.flip()
+        self.screen.fill(self.bg_color)  # 1. Limpia pantalla
+        self.ecs_world.process()  # 2. Procesa sistemas ECS (incluyendo texto)
+        system_rendering(self.ecs_world, self.screen)  # 3. Dibuja sprites, fondo, etc
+        pygame.display.flip()  # 4. Actualiza ventana
 
     def _clean(self):
         self.ecs_world.clear_database()
@@ -216,3 +222,11 @@ def system_text_rendering(world: esper.World, screen: pygame.Surface):
             text_comp.surface.set_alpha(0)
         else:
             screen.blit(text_comp.surface, position)
+
+def system_game_state(world: esper.World, event: pygame.event.Event):
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+        print("¡PRESIONASTE PAUSA!")
+
+def system_special_ability(world: esper.World, delta_time: float, bullet_config, event=None):
+    components = world.get_components(CPlayerState, CTransform, CSurface, CInputCommand, CSpecialAbility)
+    print("Componentes encontrados:", len(components))
