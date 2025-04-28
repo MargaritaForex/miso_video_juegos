@@ -189,6 +189,11 @@ class GameEngine:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.paused = not self.paused
                 print(f"[DEBUG] Pausa {'activada' if self.paused else 'desactivada'}")
+                # Mostrar/ocultar texto de pausa
+                for ent, c_text in self.ecs_world.get_component(CText):
+                    if c_text.text == "GAME PAUSED":
+                        c_text.hidden = not self.paused
+                        c_text.dirty = True
             system_game_state(self.ecs_world, event)
             system_special_ability(self.ecs_world, self.delta_time, self.bullet_cfg, event)
             if event.type == pygame.QUIT:
