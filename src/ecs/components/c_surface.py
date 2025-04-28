@@ -14,7 +14,7 @@ class CSurface:
         c_surf.area = surface.get_rect() # Se actualiza el area para pintar la superficie nueva
         return c_surf
 
-    def get_area_relative(area: pygame.Rect, pos_topleft: pygame.Vector2):
+    def get_area_relative(area: pygame.Rect, pos_topleft: pygame.Vector2): # Metodo estatico porque no tiene self
         new_rect = area.copy()
         new_rect.topleft = pos_topleft.copy()
         return new_rect
