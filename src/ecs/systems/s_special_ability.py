@@ -8,6 +8,7 @@ from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_special_ability import CSpecialAbility
 from src.ecs.components.c_text import CText  # 👈 Importamos CText
 from src.create.prefab_creator import create_bullet
+from src.engine.service_locator import ServiceLocator
 
 # Global para almacenar ID del texto (¡no crear mil textos nuevos!)
 cooldown_text_entity = None
@@ -84,6 +85,7 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
                         surface.surf.get_size(),
                         bullet_config
                     )
+                ServiceLocator.sounds_service.play("assets/snd/laser_special.ogg")
                 special_ability.ready = False
                 special_ability.current_cooldown = special_ability.cooldown_time
             else:

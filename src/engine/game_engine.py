@@ -58,6 +58,8 @@ class GameEngine:
             (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), pygame.SCALED
         )
 
+        # (No cargar sonidos aquí, solo se reproducen en los sistemas)
+
         self.clock = pygame.time.Clock()
         self.is_running = False
         self.framerate = self.window_cfg["framerate"]

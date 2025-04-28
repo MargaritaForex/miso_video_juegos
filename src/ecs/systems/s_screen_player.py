@@ -5,6 +5,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.engine.service_locator import ServiceLocator
 
 
 def system_screen_player(world: esper.World, velocity: float, screen: pygame.Surface):
@@ -21,6 +22,10 @@ def system_screen_player(world: esper.World, velocity: float, screen: pygame.Sur
             dir_x -= 1
         if c_tag.right:
             dir_x += 1
+
+        # Sonido de movimiento solo si hay movimiento
+        if dir_x != 0 or dir_y != 0:
+            ServiceLocator.sounds_service.play("assets/snd/ufo.ogg")
 
         c_v.vel.x = dir_x * velocity
         c_v.vel.y = dir_y * velocity

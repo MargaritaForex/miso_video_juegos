@@ -3,6 +3,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.create.prefab_creator import create_explosion
+from src.engine.service_locator import ServiceLocator
 
 
 def system_collision_player_enemy(world: esper.World, player_entity: int, level_cfg: dict, explosion_info: dict):
@@ -17,6 +18,7 @@ def system_collision_player_enemy(world: esper.World, player_entity: int, level_
             # Crear explosión en la posición del enemigo
             explosion_pos = c_t.pos.copy()  # O usa pygame.Vector2(c_t.pos.x, c_t.pos.y)
             create_explosion(world, explosion_pos, explosion_info)
+            ServiceLocator.sounds_service.play("assets/snd/explosion.ogg")
             world.delete_entity(enemy_entity)
             # Respawnear jugador en su posición inicial
             spawn_x = level_cfg["player_spawn"]["position"]["x"] - pl_s.surf.get_width() / 2
