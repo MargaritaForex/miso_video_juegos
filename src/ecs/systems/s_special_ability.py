@@ -18,6 +18,13 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
     components = world.get_components(CPlayerState, CTransform, CSurface, CSpecialAbility)
     print(f"[DEBUG] Jugadores con habilidad especial: {len(components)}")
 
+    # Buscar el texto de porcentaje especial
+    percent_text_entity = None
+    for ent, c_text in world.get_component(CText):
+        if c_text.text.endswith("%"):
+            percent_text_entity = ent
+            break
+
     for _, (player, transform, surface, special_ability) in components:
         print(f"[DEBUG] Cooldown actual: {special_ability.current_cooldown}, Ready: {special_ability.ready}")
         # Actualizar cooldown
@@ -29,7 +36,16 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
                 special_ability.current_cooldown = 0
                 print("[DEBUG] Habilidad especial lista para usarse!")
 
-        # ACTUALIZAR el texto de cooldown
+        # Actualizar el texto de porcentaje especial
+        if percent_text_entity is not None:
+            percent_text = world.component_for_entity(percent_text_entity, CText)
+            percent = 100 - int((special_ability.current_cooldown / special_ability.cooldown_time) * 100) if special_ability.cooldown_time > 0 else 100
+            if special_ability.ready:
+                percent = 100
+            percent_text.text = f"{percent}%"
+            percent_text.dirty = True
+
+        # ACTUALIZAR el texto de cooldown (opcional, puedes dejarlo si quieres ver segundos)
         if cooldown_text_entity is None:
             # Crear el texto si no existe aún
             cooldown_text_entity = world.create_entity()
@@ -51,14 +67,20 @@ def system_special_ability(world: esper.World, delta_time: float, bullet_config,
             print("[DEBUG] Evento KEYDOWN de E detectado")
             if special_ability.ready:
                 print("¡Habilidad especial activada!")
-                # Crear 8 balas en círculo
-                for angle in range(0, 360, 45):
+                # Crear balas en círculo (12 balas, cada 30 grados)
+                player_center = pygame.Vector2(
+                    transform.pos.x + (surface.surf.get_width() / 2),
+                    transform.pos.y + (surface.surf.get_height() / 2)
+                )
+                for angle in range(0, 360, 30):
                     angle_rad = math.radians(angle)
-                    direction = pygame.Vector2(math.cos(angle_rad), math.sin(angle_rad))
+                    target_x = player_center.x + 100 * math.cos(angle_rad)
+                    target_y = player_center.y + 100 * math.sin(angle_rad)
+                    target_pos = pygame.Vector2(target_x, target_y)
                     create_bullet(
                         world,
-                        direction,
-                        transform.pos,
+                        target_pos,
+                        player_center,
                         surface.surf.get_size(),
                         bullet_config
                     )
