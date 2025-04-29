@@ -46,6 +46,10 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
             chase_speed=enemy_info["velocity_chase"]
         ))
         world.add_component(enemy_entity, CAnimation(enemy_info["animations"]))
+        surface_component = world.component_for_entity(enemy_entity, CSurface)
+        enemy_rect = surface_component.surf.get_rect()
+        surface_component.area.w = enemy_rect.w / enemy_info["animations"]["number_frames"]
+        surface_component.area.h = enemy_rect.h
     else:
         vel_max = enemy_info["velocity_max"]
         vel_min = enemy_info["velocity_min"]
@@ -64,7 +68,7 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
                          player_lvl_info["position"]["y"] - (size[1] / 2))
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CTagPlayer(player_info["input_velocity"]))
     world.add_component(player_entity,
                         CAnimation(player_info["animations"]))
     world.add_component(player_entity,
