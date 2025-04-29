@@ -1,6 +1,6 @@
 # 🚀 Space Shooter - Instrucciones de Instalación y Ejecución
 
-https://margarita-forex.itch.io/miso-video-juego
+[https://margarita-forex.itch.io/miso-video-juego](https://margarita-forex.itch.io/miso-video-juego-enemies)
 ## 🛠️ Instalación Local
 
 1. **Clonar el repositorio**
